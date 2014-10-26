@@ -27,7 +27,7 @@
 # 6 LAYING
 
 
-TEST_NROWS = 2
+TEST_NROWS = -1
 
 
 
@@ -49,12 +49,12 @@ testAct <- read.csv(paste(baseDir,"test/y_test.txt",sep=""), header=FALSE, sep =
 
 
 #use descriptive names in activities
-testAct[which(testAct$V1==1),] <- "WALKING"
-testAct[which(testAct$V1==2),] <- "WALKING_UPSTAIRS"
-testAct[which(testAct$V1==3),] <- "WALKING_DOWNSTAIRS"
-testAct[which(testAct$V1==4),] <- "SITTING"
-testAct[which(testAct$V1==5),] <- "STANDING"
-testAct[which(testAct$V1==6),] <- "LAYING"
+#testAct[which(testAct$V1==1),] <- "WALKING"
+#testAct[which(testAct$V1==2),] <- "WALKING_UPSTAIRS"
+#testAct[which(testAct$V1==3),] <- "WALKING_DOWNSTAIRS"
+#testAct[which(testAct$V1==4),] <- "SITTING"
+#testAct[which(testAct$V1==5),] <- "STANDING"
+#testAct[which(testAct$V1==6),] <- "LAYING"
 
 #load subjects
 #testSubj <- read.csv(paste(baseDir,"test/subject_test.txt",sep=""), header=FALSE, sep = "", nrows=TEST_NROWS)
@@ -83,12 +83,12 @@ trainData <- read.csv(trainSet, header=FALSE, sep = "",col.names=colnames$V2, nr
 trainAct <- read.csv(paste(baseDir,"train/y_train.txt",sep=""), header=FALSE, sep = "", nrows=TEST_NROWS)
 
 #use descriptive names in activities
-trainAct[which(trainAct$V1==1),] <- "WALKING"
-trainAct[which(trainAct$V1==2),] <- "WALKING_UPSTAIRS"
-trainAct[which(trainAct$V1==3),] <- "WALKING_DOWNSTAIRS"
-trainAct[which(trainAct$V1==4),] <- "SITTING"
-trainAct[which(trainAct$V1==5),] <- "STANDING"
-trainAct[which(trainAct$V1==6),] <- "LAYING"
+#trainAct[which(trainAct$V1==1),] <- "WALKING"
+#trainAct[which(trainAct$V1==2),] <- "WALKING_UPSTAIRS"
+#trainAct[which(trainAct$V1==3),] <- "WALKING_DOWNSTAIRS"
+#trainAct[which(trainAct$V1==4),] <- "SITTING"
+#trainAct[which(trainAct$V1==5),] <- "STANDING"
+#trainAct[which(trainAct$V1==6),] <- "LAYING"
 
 #add activities column
 #trainData$Activities <- trainAct
@@ -100,7 +100,7 @@ activitiesData <- merge(testAct,trainAct,all=TRUE)
 data <- merge(testData,trainData,all=TRUE)
 
 
-data$Activities <- activitiesData$V1
+#data$Activities <- activitiesData$V1
 
 
 #2: Extracts only the measurements on the mean and standard deviation for each measurement. 
