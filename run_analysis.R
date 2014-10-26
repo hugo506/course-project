@@ -38,37 +38,41 @@ baseDir <- "course3-Cleanup/course-project/UCI HAR Dataset/"
 #load column names (features)
 colnames <- read.csv(paste(baseDir,"features.txt",sep=""), header=FALSE, sep = " ",strip.white = TRUE,stringsAsFactors=FALSE)
 
-#colnames[562,"V2"] <- "Activities"
-#colnames <- rbind(colnames,c(562,as.factor("Activities")))
-#colnames[562,"V2"] <- "Activities"
-colnames[562,"V2"]<- "Activities"
+
+colnames[nrow(colnames)+1,"V2"]<- "Activities"
+colnames[nrow(colnames)+1,"V2"]<- "Subjects"
+#rbind(colnames,c(nrow(colnames)+1,"Activities"))
+#rbind(colnames,c(nrow(colnames)+1,"Subjects"))
+
+
+
 
 
 #load activities
 testAct <- read.csv(paste(baseDir,"test/y_test.txt",sep=""), header=FALSE, sep = "", nrows=TEST_NROWS)
 
+#load subjects
+testSubj <- read.csv(paste(baseDir,"test/subject_test.txt",sep=""), header=FALSE, sep = "", nrows=TEST_NROWS)
+
 
 #use descriptive names in activities
-#testAct[which(testAct$V1==1),] <- "WALKING"
-#testAct[which(testAct$V1==2),] <- "WALKING_UPSTAIRS"
-#testAct[which(testAct$V1==3),] <- "WALKING_DOWNSTAIRS"
-#testAct[which(testAct$V1==4),] <- "SITTING"
-#testAct[which(testAct$V1==5),] <- "STANDING"
-#testAct[which(testAct$V1==6),] <- "LAYING"
-
-#load subjects
-#testSubj <- read.csv(paste(baseDir,"test/subject_test.txt",sep=""), header=FALSE, sep = "", nrows=TEST_NROWS)
-
-#combine subject and activities to create the row names
-#rownames <- paste(testSubj$V1,testAct$V1 , sep="-")
+testAct[which(testAct$V1==1),] <- "WALKING"
+testAct[which(testAct$V1==2),] <- "WALKING_UPSTAIRS"
+testAct[which(testAct$V1==3),] <- "WALKING_DOWNSTAIRS"
+testAct[which(testAct$V1==4),] <- "SITTING"
+testAct[which(testAct$V1==5),] <- "STANDING"
+testAct[which(testAct$V1==6),] <- "LAYING"
 
 
 #read the test set
 testSet <- paste(baseDir,"test/X_test.txt",sep="")
 testData <- read.csv(testSet, header=FALSE, sep = "", col.names=colnames$V2, nrows=TEST_NROWS)
 
-#add activities column
-#testData$Activities <- testAct
+#add activities and subjects column
+testData$Activities <- testAct$V1
+testData$Subjects <- testSubj$V1
+
+
 
 
 
@@ -82,25 +86,25 @@ trainData <- read.csv(trainSet, header=FALSE, sep = "",col.names=colnames$V2, nr
 #load activities
 trainAct <- read.csv(paste(baseDir,"train/y_train.txt",sep=""), header=FALSE, sep = "", nrows=TEST_NROWS)
 
+#load subjects
+trainSubj <- read.csv(paste(baseDir,"train/subject_train.txt",sep=""), header=FALSE, sep = "", nrows=TEST_NROWS)
+
 #use descriptive names in activities
-#trainAct[which(trainAct$V1==1),] <- "WALKING"
-#trainAct[which(trainAct$V1==2),] <- "WALKING_UPSTAIRS"
-#trainAct[which(trainAct$V1==3),] <- "WALKING_DOWNSTAIRS"
-#trainAct[which(trainAct$V1==4),] <- "SITTING"
-#trainAct[which(trainAct$V1==5),] <- "STANDING"
-#trainAct[which(trainAct$V1==6),] <- "LAYING"
+trainAct[which(trainAct$V1==1),] <- "WALKING"
+trainAct[which(trainAct$V1==2),] <- "WALKING_UPSTAIRS"
+trainAct[which(trainAct$V1==3),] <- "WALKING_DOWNSTAIRS"
+trainAct[which(trainAct$V1==4),] <- "SITTING"
+trainAct[which(trainAct$V1==5),] <- "STANDING"
+trainAct[which(trainAct$V1==6),] <- "LAYING"
 
-#add activities column
-#trainData$Activities <- trainAct
+#add activities and subjects column
+trainData$Activities <- trainAct$V1
+trainData$Subjects <- trainSubj$V1
 
-activitiesData <- merge(testAct,trainAct,all=TRUE)
 
-
-#merge main data
+#merge into main data
 data <- merge(testData,trainData,all=TRUE)
 
-
-#data$Activities <- activitiesData$V1
 
 
 #2: Extracts only the measurements on the mean and standard deviation for each measurement. 
@@ -116,7 +120,7 @@ data <- merge(testData,trainData,all=TRUE)
 colnames(data) <- colnames$V2
 
 library("sqldf")
-cols = sqldf("select V2 from colnames where V2 like 'Activities' or V2 like '%mean()%' or V2 like '%std()%'")
+cols = sqldf("select V2 from colnames where V2 like 'Subjects' or V2 like 'Activities' or V2 like '%mean()%' or V2 like '%std()%'")
 
 #no good...
 #data <- data[,cols$V2]
@@ -132,4 +136,12 @@ data <- data[,which(names(data) %in% cols$V2)]
 #with the average of each variable for each activity and each subject.
 
 
-write.table(data,"step5.txt",row.name=FALSE)
+library(reshape)
+
+data$act_sub = paste(data$Activities,data$Subjects,sep = "_")
+
+tidyAvg <- melt(data,id=c("act_sub","Activities","Subjects"))
+
+castMean <- cast(tidyAvg,act_sub~variable,mean)
+
+write.table(castMean,"step5.txt",row.name=FALSE)
