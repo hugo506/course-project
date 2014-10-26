@@ -33,7 +33,7 @@ TEST_NROWS = -1
 
 #1: merge - 'train/X_train.txt': Training set. and - 'test/X_test.txt': Test set.
 
-baseDir <- "course3-Cleanup/course-project/UCI HAR Dataset/"
+baseDir <- "UCI HAR Dataset/"
 
 #load column names (features)
 colnames <- read.csv(paste(baseDir,"features.txt",sep=""), header=FALSE, sep = " ",strip.white = TRUE,stringsAsFactors=FALSE)
