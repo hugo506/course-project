@@ -5,3 +5,5 @@ The original columns are then trimmed to include only the ones related to mean()
 ### Usage
 The script will look for the required files in the current working directory + "UCI HAR Dataset/"
 The files in the directory will be processed an the final summary data will be written to the current working directory as step5.txt
+
+The script requires the "sqldf" and "reshape" packages to be installed.
